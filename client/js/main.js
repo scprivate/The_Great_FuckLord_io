@@ -13,7 +13,8 @@ $(document).ready(function () {
 
     socket = io();
 
-    socket.on("lobbyList", (lobbyList)=>{ //###
+    socket.on("lobbyList", (lobbyList)=>{
+        clearChat(false);
         addMsgToChat("Open Lobbies: ", 4, true);
         for(let i=0;i<lobbyList.length; i++){
             addMsgToChat(lobbyList[i].toString(), 4, true);
@@ -25,12 +26,13 @@ $(document).ready(function () {
         debug("joined lobby: " + lobbyNum);
         myLobby = lobbyNum;
 
-        theBoard = new Board();
-        fitStageIntoParentContainer();
+        newGame();
     });
 
     socket.on("failedToJoin", () => {
         debug("failed to join lobby");
+        clearChat(false);
+        addMsgToChat("Failed to join lobby", 4, true);
         socket.emit("getLobbyList");
     });
 
@@ -72,6 +74,10 @@ $(document).ready(function () {
 
     socket.on("clearChat", () => {
         clearChat();
+    });
+
+    socket.on("newGame", () => {
+        newGame();
     });
 
     $(document).keydown(function (e) {

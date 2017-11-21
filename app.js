@@ -36,6 +36,12 @@ class Lobby{
         this.gameState = []; //[{index:1, position:{x:0, y:0}}, ...]
         this.currentCard = undefined;
     }
+    newGame(){
+        this.broadCast("newGame");
+        this.clearPlayerHoldings();
+        this.gameState = [];
+        this.currentCard = undefined;
+    }
     updateGameState(index, position){
         let found = false;
         for(let i=0;i<this.gameState.length;i++){
@@ -51,6 +57,11 @@ class Lobby{
     sendGameState(socket){
         debug("sending game state");
         socket.emit("gameState", this.gameState);
+    }
+    forceGameState(){
+        for (let i = 0; i < this.playerList.length; i++) {
+            this.sendGameState(this.playerList[i].socket);
+        }
     }
     isFull(){
         return this.playerList.length >= MaxLobbySize;
@@ -87,6 +98,15 @@ class Lobby{
         this.playerList.push({color: playerColor, socket: socket, holding: undefined});
         socket.emit("yourColor", playerColor);
     }
+    kick(color) {
+        for (let i = 0; i < this.playerList.length; i++) {
+            if (this.playerList[i].color == color) {
+                let player = this.playerList[i];
+                this.playerList.splice(i, 1);
+                player.socket.emit("getKicked");
+            }
+        }
+    }
     pieceIsOpen(num){
         for (let i = 0; i < this.playerList.length; i++) {
             if (this.playerList[i].holding == num) {
@@ -94,6 +114,11 @@ class Lobby{
             }
         }
         return true;
+    }
+    clearPlayerHoldings(){
+        for (let i = 0; i < this.playerList.length; i++) {
+            this.playerList[i].holding = undefined;
+        }
     }
     setPlayerHolding(color, piece){
         for (let i = 0; i < this.playerList.length; i++) {
@@ -237,12 +262,15 @@ io.sockets.on('connection', function (socket) {
             debug("lobby is undefined at movedPiece");
             return;
         }
-
         if (lobby.playerIsHolding(moveObj.color, moveObj.piece)) {
             let unitPosition = {x: moveObj.x, y:moveObj.y, piece:moveObj.piece};
             lobby.broadCastExceptToColor("pieceMoving", unitPosition, moveObj.color);
         }
-        
+    });
+
+    socket.on("getLobbyList", function (moveObj) {
+        maintainLobbies();
+        socket.emit("lobbyList", openLobbys());
     });
 
     socket.on("droppedPiece", function (dropObj) {
@@ -259,7 +287,7 @@ io.sockets.on('connection', function (socket) {
             lobby.updateGameState(dropObj.piece, unitPosition);
         }
     });
-
+ 
     //card handling
     socket.on("clickedCard", function (card) {
         broadcastToAllExceptColor("newCard", { "color": card.cardColor, "number": card.cardNum }, card.color);
@@ -268,13 +296,11 @@ io.sockets.on('connection', function (socket) {
 
     //chat handling
     socket.on("chat", function (chatObj) {
-        
         //Length validation
         if (chatObj.msg.length > 55) {
             return;
         }
-
-        //Command for jaoining lobby
+        //Command for joining lobby
         if (chatObj.msg.indexOf("/join") == 0) {
             maintainLobbies();
             //join a lobby
@@ -285,23 +311,27 @@ io.sockets.on('connection', function (socket) {
             maintainLobbies();
             return;
         }
-
         //All other commands require a valid lobby number
         let lobby = getLobby(chatObj.lobby);
         if(!lobby){
             debug("invalid lobby number at chat handling");
             return;
         }
-
         //New game command
-        if (chatObj.msg == "/ng") { //###
+        if (chatObj.msg == "/ng") {
+            debug("starting new game");
             maintainLobbies();
-            newGame();
+            lobby.newGame();
             return;
         }
         //clear chat
         else if (chatObj.msg == "/clear") {
             lobby.broadCast("clearChat");
+            return;
+        }
+        //force game state
+        else if (chatObj.msg == "/force") {
+            lobby.forceGameState();
             return;
         }
         //kick player

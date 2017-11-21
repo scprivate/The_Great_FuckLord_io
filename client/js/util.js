@@ -69,3 +69,9 @@ function clearChat(verbose=true) {
         addMsgToChat("Chat Cleared", "4", true);
     }
 }
+
+function newGame(){
+    debug("starting new Game");
+    theBoard = new Board();
+    fitStageIntoParentContainer();
+}
