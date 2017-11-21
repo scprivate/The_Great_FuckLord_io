@@ -355,6 +355,12 @@ io.sockets.on('connection', function (socket) {
             lobby.broadCast("clearChat");
             return;
         }
+        //Roll
+        else if (chatObj.msg == "/roll") {
+            let value = Math.floor(Math.random() * 4);
+            lobby.broadCast("rollValue", value);
+            return;
+        }
         //force game state + remove all player holdings
         else if (chatObj.msg == "/fix") {
             lobby.clearPlayerHoldings();

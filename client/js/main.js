@@ -57,9 +57,13 @@ $(document).ready(function () {
     });
 
     socket.on("letGo", () => {
-        if(theBoard.currentPiece){
+        if (theBoard.currentPiece) {
             theBoard.dropPiece = true;
         }
+    });
+
+    socket.on("rollValue", (value) => {
+        addMsgToChat("Rolled " + numToColor[value], value, true);
     });
 
     socket.on("pieceMoving", (unitPosition) => {
