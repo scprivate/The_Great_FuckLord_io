@@ -47,6 +47,11 @@ $(document).ready(function () {
         addMsgToChat(chatObj.msg, chatObj.color);
     });
 
+    socket.on("newCard", (cardVal) => {
+        changeDeckColor();
+        displayCardOnCanvas(cardVal);
+    });
+
     socket.on("getKicked", () => {
         window.location.href = "https://www.youtube.com/watch?v=Wp1kzZ-eDTw";
     });
@@ -81,8 +86,9 @@ $(document).ready(function () {
     });
 
     $(document).keydown(function (e) {
-        if (e.keyCode === 27) {
-            return; //###
+        if (e.keyCode === 27) { //bind fix to escape
+            socket.emit("chat", { "color": myColor, "msg": "/fix", "lobby": myLobby });
+            return;
         }
         else if (e.keyCode == 13) { //enter
             $("#chatInput").focus();

@@ -29,6 +29,14 @@ var lobbies = [];
 var numToColor = { 0: "Red", 1: "Blue", 2: "Yellow", 3: "Green", 4: "Black" };
 var ColorToNum = { "Red": 0, "Blue": 1, "Yellow": 2, "Green": 3, "Black": 4 };
 
+var numCardVals = ["1", "2", "3", "4", "5", "6", "7"];
+var fuckCardVals = ["Fuck Off", "Get Fucked", "FuckLord"];
+var fuckCardChance = 0.2;
+
+Array.prototype.random = function () {
+    return this[Math.floor((Math.random() * this.length))];
+}
+
 class Lobby{
     constructor(number){
         this.number = number;
@@ -213,6 +221,18 @@ function joinLobby(lobbyNum, socket){
     socket.emit("joined", lobby.number);
     lobby.add(socket);
     lobby.sendGameState(socket);
+    if (lobby.currentCard) {
+        socket.emit("newCard", lobby.currentCard);
+    }
+}
+
+
+function getRandomCard(){
+    if(Math.random() < fuckCardChance){
+        return fuckCardVals.random();
+    } else{
+        return numCardVals.random();
+    }
 }
 
 //sockets
@@ -289,9 +309,15 @@ io.sockets.on('connection', function (socket) {
     });
  
     //card handling
-    socket.on("clickedCard", function (card) {
-        broadcastToAllExceptColor("newCard", { "color": card.cardColor, "number": card.cardNum }, card.color);
-        gameHistory.push({ "type": "newCard", "cardNum": card.cardNum, "cardColor": card.cardColor });
+    socket.on("getNewCard", function (lobbyNum) {
+        let cardVal = getRandomCard();
+        let lobby = getLobby(lobbyNum);
+        if(!lobby){
+            debug("invalid lobby num at getNewCard");
+            return;
+        }
+        lobby.broadCast("newCard", cardVal);
+        lobby.currentCard = cardVal;
     });
 
     //chat handling
@@ -329,8 +355,9 @@ io.sockets.on('connection', function (socket) {
             lobby.broadCast("clearChat");
             return;
         }
-        //force game state
-        else if (chatObj.msg == "/force") {
+        //force game state + remove all player holdings
+        else if (chatObj.msg == "/fix") {
+            lobby.clearPlayerHoldings();
             lobby.forceGameState();
             return;
         }

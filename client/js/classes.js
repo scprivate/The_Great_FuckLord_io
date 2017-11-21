@@ -15,8 +15,43 @@ class Board{
         this.currentPiece = undefined;
         this.dropPiece = false;
 
+        this.currentCard = undefined;
+
         this.addDefaultPieces();
+        this.addDeck();
         this.setupEvents();
+    }
+
+    addDeck(){
+        let boardSize = 600;
+        let cardWidth = 80;
+        let cardHeight = cardWidth * 1.5;
+        let horizontalGap = 20;
+        let verticalOffset = 0;
+
+        var deck = new Konva.Rect({
+            x: boardSize / 2 - cardWidth - horizontalGap / 2,
+            y: boardSize / 2 - cardHeight / 2 + verticalOffset, 
+            width: cardWidth,
+            height: cardHeight,
+            fill: 'grey',
+            stroke: 'black',
+            strokeWidth: 4,
+            name: 'deck'
+        });
+
+        var card = new Konva.Rect({
+            x: boardSize / 2 + horizontalGap / 2,
+            y: boardSize / 2 - cardHeight / 2 + verticalOffset,
+            width: cardWidth,
+            height: cardHeight,
+            fill: 'lightgrey',
+            stroke: 'black',
+            strokeWidth: 4,
+            name: 'card'
+        });
+        this.layer.add(deck);
+        this.layer.add(card);
     }
 
     getUnitPosition(index){
@@ -26,8 +61,8 @@ class Board{
         let position = piece.position();
 
         return {
-            x: position.x / 600,
-            y: position.y / 600
+            x: position.x,
+            y: position.y
         }
     }
 
@@ -38,8 +73,8 @@ class Board{
         piece.moveToTop();
 
         let newPos = {
-            x: unitPos.x * 600,
-            y: unitPos.y * 600
+            x: unitPos.x,
+            y: unitPos.y
         }
 
         let position = piece.position(newPos);
@@ -82,17 +117,24 @@ class Board{
             socket.emit("droppedPiece", { lobby: myLobby, color: myColor, piece: e.target.name(), x: unitPos.x, y: unitPos.y});
             layer.draw();
         });
+
+        this.stage.on("click", function (e) {
+            if(e.target.attrs.name == "deck"){
+                socket.emit("getNewCard", myLobby);
+            }
+        });
     }
 
     addDefaultPieces(){
         let stage = this.stage;
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 16; i++) {
 
-            let x = stage.getWidth() * (i / 12) + 12;
-            let y = stage.getHeight() / 2;
+            let x = piecePositions[i].x;
+            let y = piecePositions[i].y;
+            let color = getPieceColor(i);
 
-            let piece = this.makePiece(x, y, "red", i);
+            let piece = this.makePiece(x, y, color, i);
 
             this.pieceList.push(piece);
             this.layer.add(piece);
