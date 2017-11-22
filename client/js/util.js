@@ -96,6 +96,10 @@ function addMsgToChat(msg, colorNum = myColor, overrideMsg = false) {
 
     let color = numToColor[colorNum];
 
+    if(color == undefined){
+        color = "Guest";
+    }
+
     if (overrideMsg) {
         $("#chatList").append($("<li class='chatMessage'>").text(msg).css('color', color));
         return;
