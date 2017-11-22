@@ -35,7 +35,7 @@ var fuckCardChance = 0.15;
 
 Array.prototype.random = function () {
     return this[Math.floor((Math.random() * this.length))];
-}
+};
 
 class Lobby{
     constructor(number){
@@ -157,7 +157,7 @@ function openLobbys(){
     let openLobbyList = [];
     for (let i = 0; i < lobbies.length; i++) {
         if(lobbies[i].hasRoom()){
-            openLobbyList.push(lobbies[i].number)
+            openLobbyList.push(lobbies[i].number);
         }
     }
     return openLobbyList;
@@ -166,7 +166,7 @@ function openLobbys(){
 function getUniqueLobbyNumber(){
     let lobbyNums = [];
     for (let i = 0; i < lobbies.length; i++) {
-        lobbyNums.push(lobbies[i].number)
+        lobbyNums.push(lobbies[i].number);
     }
     let i=1;
     while(true){
@@ -239,12 +239,6 @@ function getRandomCard(){
 
 //sockets
 io.sockets.on('connection', function (socket) {
-
-    socket.on("eval", (evalStr)=>{//### REMOVE THIS LATER
-        debug(eval(evalStr));
-    })
-
-    // ========== Initial Socket Connection ===========
 
     //Initial connection message
     debug("new socket connection");
