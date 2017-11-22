@@ -29,9 +29,9 @@ var lobbies = [];
 var numToColor = { 0: "Red", 1: "Blue", 2: "Yellow", 3: "Green", 4: "Black" };
 var ColorToNum = { "Red": 0, "Blue": 1, "Yellow": 2, "Green": 3, "Black": 4 };
 
-var numCardVals = ["1", "2", "3", "4", "5", "6", "7"];
+var numCardVals = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 var fuckCardVals = ["Fuck Off", "Get Fucked", "FuckLord"];
-var fuckCardChance = 0.2;
+var fuckCardChance = 0.15;
 
 Array.prototype.random = function () {
     return this[Math.floor((Math.random() * this.length))];

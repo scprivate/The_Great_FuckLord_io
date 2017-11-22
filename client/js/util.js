@@ -2,22 +2,23 @@ var numToColor = { 0: "Red", 1: "Blue", 2: "Yellow", 3: "Green", 4: "Black" };
 var ColorToNum = { "Red": 0, "Blue": 1, "Yellow": 2, "Green": 3, "Black": 4 };
 
 var piecePositions = {
-    0: { x: 0, y: 0 },
-    1: { x: 10, y: 10 },
-    2: { x: 20, y: 20 },
-    3: { x: 30, y: 30 },
-    4: { x: 40, y: 40 },
-    5: { x: 50, y: 50 },
-    6: { x: 60, y: 60 },
-    7: { x: 70, y: 70 },
-    8: { x: 80, y: 80 },
-    9: { x: 90, y: 90 },
-    10: { x: 100, y: 100 },
-    11: { x: 110, y: 110 },
-    12: { x: 120, y: 120 },
-    13: { x: 130, y: 130 },
-    14: { x: 140, y: 140 },
-    15: { x: 150, y: 150 },
+    0: { x: 79, y: 58 },
+    1: { x: 98.5, y: 77.7 },
+    2: { x: 79, y: 97.4 },
+    3: { x: 60.3, y: 77.7 },
+    4: { x: 521.6, y: 60 },
+    5: { x: 540.2, y: 78.7 },
+    6: { x: 521.6, y: 96.2 },
+    7: { x: 503, y: 78.7 },
+    8: { x: 521.6, y: 503.9 },
+    9: { x: 538, y: 521.3 },
+    10: { x: 521.6, y: 539.9 },
+    11: { x: 503, y: 521.3 },
+    12: { x: 79, y: 502 },
+    13: { x: 97.5, y:521.39 },
+    14: { x: 79, y: 537.7 },
+    15: { x: 60.4, y: 521.39 },
+    
 };
 
 let cards = {
@@ -27,7 +28,10 @@ let cards = {
     "4": "Move\nFour Spaces\nor\nMove Enemy\nOne Space",
     "5": "Move\nFive Spaces",
     "6": "Move\nSix Spaces\nor\nSwitch Positions\nWith an Enemy",
-    "7": "Move Forward\n Seven Spaces\nor\nSplit the Move\nBetween\nTwo Pieces",
+    "7": "Move\nSeven Spaces\nor\nSplit the Move\nBetween\nTwo Pieces",
+    "8":"Move\nEight Spaces\nor\nDraw Again",
+    "9":"Move\nNine Spaces",
+    "10":"Move\nTen Spaces\nor\nMove Enemy\nTwo Spaces",
     "Fuck Off": "Expell Enemy\nFrom Home\nor\nLeave Start",
     "Get Fucked": "Take a Piece\nFrom Start\nand\nBump an Enemy\nBack to Start",
     "FuckLord": "Leave Start\nor\nMove Piece\nDirectly to Home\n\nAnd\nDraw Again"
