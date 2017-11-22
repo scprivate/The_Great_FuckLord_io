@@ -105,6 +105,7 @@ class Lobby{
         let playerColor = this.getUniquePlayerColor();
         this.playerList.push({color: playerColor, socket: socket, holding: undefined});
         socket.emit("yourColor", playerColor);
+        this.broadCast("playerJoined", playerColor);
     }
     kick(color) {
         for (let i = 0; i < this.playerList.length; i++) {
@@ -198,6 +199,7 @@ function removePlayer(socket){
     for (let i = 0; i < lobbies.length; i++){
         for (let j = 0; j < lobbies[i].playerList.length; j++){
             if(lobbies[i].playerList[j].socket === socket){
+                lobbies[i].broadCast("playerLeft", lobbies[i].playerList[j].color);
                 lobbies[i].playerList.splice(j, 1);
             }
         }

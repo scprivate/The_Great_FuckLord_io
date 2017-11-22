@@ -89,6 +89,14 @@ $(document).ready(function () {
         newGame();
     });
 
+    socket.on("playerJoined", (color) => {
+        addMsgToChat("Server: " + numToColor[color] + " Joined", 4, true)
+    });
+
+    socket.on("playerLeft", (color) => {
+        addMsgToChat("Server: " + numToColor[color] + " Left", 4, true)
+    });
+
     $(document).keydown(function (e) {
         if (e.keyCode === 27) { //bind fix to escape
             socket.emit("chat", { "color": myColor, "msg": "/fix", "lobby": myLobby });
